@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Details</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: #FFFFFF;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            text-align: center;
+            padding: 40px;
+            border-radius: 15px;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(5px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 2;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .detail-item {
+            margin: 10px 0;
+            color: #FFF;
+        }
+
+        .detail-item a {
+            color: #FFFFFF; /* Make link color white */
+            text-decoration: none; /* Remove underline */
+        }
+
+        .detail-item a:hover {
+            text-decoration: underline; /* Optional: add underline on hover */
+        }
+
+        .back-btn {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 18px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 20px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            text-decoration: none; /* Ensure button link does not have underline */
+        }
+
+        .back-btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Great Choice!</h1>
+        <div class="detail-item">{{ restaurant['Name'] }}</div>
+        <div class="detail-item">
+            {% for _ in range((restaurant['Price Level'] | round) | int) %} $ {% endfor %}
+        </div>
+        <div class="detail-item">{{ restaurant['Rating'] }}</div>
+        <div class="detail-item">
+            {% if restaurant.get('Google Maps URL') %}
+                <a href="{{ restaurant.get('Google Maps URL') }}" target="_blank">{{ restaurant['Address'] if restaurant['Address'] != None and restaurant['Address'] != 'nan' else '-' }}</a>
+            {% else %}
+                {{ restaurant['Address'] if restaurant['Address'] != None and restaurant['Address'] != 'nan' else '-' }}
+            {% endif %}
+        </div>
+        <div class="detail-item">
+            {% if restaurant['Phone Number'] != None and restaurant['Phone Number'] != 'nan' %}
+                <a href="tel:{{ restaurant['Phone Number'] }}">{{ restaurant['Phone Number'] }}</a>
+            {% else %}
+                -
+            {% endif %}
+        </div>        
+        <a href="/" class="back-btn">Choose Again</a>
+    </div>
+</body>
+</html>

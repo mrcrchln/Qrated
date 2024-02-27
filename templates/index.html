@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Picker</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+    
+        html, body {
+            height: 100%;
+            margin: 0;
+            overflow: hidden; /* Prevent scrolling from the moving burger */
+        }
+    
+        body {
+            font-family: 'Poppins', sans-serif;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: #FFFFFF;
+        }
+    
+        @keyframes gradientBG {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+    
+        .container {
+            text-align: center;
+            padding: 40px;
+            border-radius: 15px;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(5px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            position: relative; /* Ensure that .container is the positioning context for .floating-burger */
+            z-index: 2; /* Higher z-index to ensure it's above the floating burger */
+        }
+    
+        .title {
+            margin-bottom: 30px;
+            font-size: 2em;
+            text-transform: uppercase;
+        }
+    
+        .start-btn {
+            background-color: transparent;
+            color: #FFF;
+            border: 2px solid #FFF;
+            padding: 15px 30px;
+            font-size: 1em;
+            font-weight: 600;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+            z-index: 2; /* Ensure buttons are above the floating burger */
+        }
+    
+        .start-btn:hover {
+            background-color: #FFF;
+            color: #000;
+            transform: scale(1.05);
+        }
+        @keyframes floatH {
+            0% {
+                left: -20%;
+                top: 50%;
+                transform: translate(-50%, -50%);
+            }
+            50% {
+                left: 100%;
+                top: 50%;
+                transform: translate(50%, -50%);
+            }
+            100% {
+                left: -20%;
+                top: 50%;
+                transform: translate(-50%, -50%);
+            }
+        }
+    
+        .floating-burger {
+            position: absolute;
+            animation: floatH 6s linear infinite;
+            will-change: transform;
+            pointer-events: none;
+            z-index: 1; /* Lower z-index to ensure it's below the content */
+            
+            /* Set specific dimensions for the images */
+            width: 150px; /* or any size you prefer */
+            height: auto; /* maintain the aspect ratio */
+        }
+    </style>    
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Where should we eat tonight?</h1>
+        <form action="/pick" method="post">
+            <button type="submit" name="city" value="Dublin" class="start-btn">Dublin</button>
+            <button type="submit" name="city" value="Lisbon" class="start-btn">Lisbon</button>
+            <button type="submit" name="city" value="Zurich" class="start-btn">Zurich</button>
+        </form>
+    </div>
+    <img src="static/burger.png" class="floating-burger" style="top: 20%; right: 10%;" alt="Floating Burger">
+    <script>    
+        const images = ['static/burger.png', 'static/poke.png', 'static/salad.png'];
+        let currentIndex = 0;
+    
+        // Function to swap image
+        function swapImage() {
+            const floatingImage = document.querySelector('.floating-burger');
+            currentIndex = (currentIndex + 1) % images.length; // Move to the next index, loop back to 0 if at the end
+            floatingImage.setAttribute('src', images[currentIndex]);
+        }
+    
+        // Change image every 3 seconds
+        setInterval(swapImage, 3000);
+    </script>         
+</body>
+</html>

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pick a Restaurant</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: #FFFFFF;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            text-align: center;
+            padding: 40px;
+            border-radius: 15px;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(5px);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+            position: relative; /* Ensure that .container is the positioning context for .floating-burger */
+            z-index: 2; /* Higher z-index to ensure it's above the floating burger */
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .restaurant-item {
+            position: relative; /* Ensure the position context for the absolute positioning of the button */
+            border-bottom: 1px solid #eee;
+            padding: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            color: #FFF;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            display: flex;
+            justify-content: space-between;
+            vertical-align: middle;
+        }
+
+        .restaurant-item:last-child {
+            border-bottom: none;
+        }
+
+        .restaurant-item:hover, .restaurant-item.vetoed:hover {
+            background-color: #f0f9ff;
+            color: #000; /* Change text color on hover for contrast */
+        }
+
+        .veto-btn {
+            cursor: pointer;
+            color: red;
+            background-color: transparent;
+            border: none;
+            box-shadow: none;
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            padding-right: 10px;
+            transform: translateY(-50%);
+            font-size: 20px;
+        }
+
+        .vetoed {
+            text-decoration: line-through;
+            opacity: 0.6;
+        }
+
+        h1 {
+            color: #FFF; /* Change title color to white to match the theme */
+        }
+
+        .veto-submit-btn {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 20px 20px;
+            font-size: 18px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 20px;
+            display: block; /* Center the button */
+            width: 100%%; /* Ensure the button width fits its content */
+            margin-left: auto; /* Align the button to the right */
+            margin-right: auto; /* Align the button to the center */
+        }
+
+        .veto-submit-btn:hover {
+            background-color: #0056b3;
+        }
+
+        .floating-burger {
+            position: absolute;
+            animation: floatH 6s linear infinite;
+            will-change: transform;
+            pointer-events: none;
+            z-index: 1; /* Lower z-index to ensure it's below the content */
+            width: 150px; /* or any size you prefer */
+            height: auto; /* maintain the aspect ratio */
+            top: 20%; /* Adjust position as needed */
+            right: 10%; /* Adjust position as needed */
+        }        
+
+        @keyframes floatH {
+            0% {
+                left: -20%;
+                top: 50%;
+                transform: translate(-50%, -50%);
+            }
+            50% {
+                left: 100%;
+                top: 50%;
+                transform: translate(50%, -50%);
+            }
+            100% {
+                left: -20%;
+                top: 50%;
+                transform: translate(-50%, -50%);
+            }
+        }       
+    </style>
+</head>
+<body>
+    <img src="static/burger.png" class="floating-burger" style="top: 20%; right: 10%;" alt="Floating Burger">
+    <div class="container">
+        <h1>Your Preselection</h1>
+        <form method="POST" action="/choose" id="vetoForm">
+            <!-- This section will be dynamically generated based on server-side logic -->
+            {% for restaurant in random_restaurants %}
+            <div class="restaurant-item" id="restaurant-{{ loop.index0 }}">
+                <!-- Display restaurant name -->
+                <span class="restaurant-name" onclick="selectRestaurant('{{ restaurant['Name'] }}')" style="cursor:pointer; display: inline-block; width: 60%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
+                    {{ restaurant['Name'] }}
+                </span>
+                <!-- Display restaurant price with equivalent dollar signs -->
+                <span class="restaurant-price" style="display: inline-block; width: 20%;">
+                    {% for _ in range((restaurant['Price Level'] | round) | int) %} $ {% endfor %}
+                </span>
+                <!-- Display restaurant cuisine -->
+                <span class="restaurant-cuisine" style="display: inline-block; width: 20%; text-align: left;">
+                    {{ restaurant['Rating'] }}
+                </span>
+                <button type="button" onclick="event.stopPropagation(); toggleVeto('{{ loop.index0 }}');" class="veto-btn">✗</button>
+                <input type="checkbox" id="veto-{{ loop.index0 }}" name="vetoed_restaurants" value="{{ restaurant['Name'] }}" hidden>
+            </div>
+            {% endfor %}
+            <button type="submit" name="action" value="veto" class="veto-submit-btn">Decide For Me</button>
+        </form>
+    </div>
+
+    <script>
+        function priceToDollarSigns() {
+            const prices = document.querySelectorAll('.price');
+            prices.forEach((priceElement) => {
+                const priceValue = parseInt(priceElement.getAttribute('data-price'), 10);
+                let dollarSigns = '$'.repeat(priceValue);
+                priceElement.textContent = dollarSigns || '?'; // Fallback to '?' if priceValue is not valid
+            });
+        }
+
+        // Call priceToDollarSigns function to convert numeric prices to dollar signs after the page loads
+        document.addEventListener('DOMContentLoaded', priceToDollarSigns);
+
+        function selectRestaurant(restaurantName) {
+            // Create a form element
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/select_direct'; // Adjust the action URL to match your server's endpoint
+        
+            // Create an input element for the restaurant name
+            const hiddenField = document.createElement('input');
+            hiddenField.type = 'hidden';
+            hiddenField.name = 'selected_restaurant';
+            hiddenField.value = restaurantName;
+        
+            // Append the input to the form
+            form.appendChild(hiddenField);
+        
+            // Append the form to the body
+            document.body.appendChild(form);
+        
+            // Submit the form
+            form.submit();
+        }
+               
+
+        function toggleVeto(index) {
+            var checkbox = document.getElementById('veto-' + index);
+            checkbox.checked = !checkbox.checked;
+            document.getElementById('restaurant-' + index).classList.toggle('vetoed', checkbox.checked);
+        }
+   
+        const images = ['static/burger.png', 'static/poke.png', 'static/salad.png'];
+        let currentIndex = 0;
+    
+        // Function to swap image
+        function swapImage() {
+            const floatingImage = document.querySelector('.floating-burger');
+            currentIndex = (currentIndex + 1) % images.length; // Move to the next index, loop back to 0 if at the end
+            floatingImage.setAttribute('src', images[currentIndex]);
+        }
+    
+        // Change image every 3 seconds
+        setInterval(swapImage, 3000);
+    </script>
+</body>
+</html>
