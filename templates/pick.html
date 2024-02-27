@@ -30,7 +30,7 @@
 
         .container {
             text-align: center;
-            padding: 40px;
+            padding: 30px;
             border-radius: 15px;
             background: rgba(0, 0, 0, 0.4);
             backdrop-filter: blur(5px);
@@ -73,7 +73,7 @@
             box-shadow: none;
             position: absolute;
             top: 50%;
-            right: 10px;
+            right: 5px;
             padding-right: 10px;
             transform: translateY(-50%);
             font-size: 20px;
@@ -148,15 +148,15 @@
             {% for restaurant in random_restaurants %}
             <div class="restaurant-item" id="restaurant-{{ loop.index0 }}">
                 <!-- Display restaurant name -->
-                <span class="restaurant-name" onclick="selectRestaurant('{{ restaurant['Name'] }}')" style="cursor:pointer; display: inline-block; width: 60%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
+                <span class="restaurant-name" onclick="selectRestaurant('{{ restaurant['Name'] }}')" style="cursor:pointer; display: inline-block; width: 56%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
                     {{ restaurant['Name'] }}
                 </span>
                 <!-- Display restaurant price with equivalent dollar signs -->
-                <span class="restaurant-price" style="display: inline-block; width: 20%;">
+                <span class="restaurant-price" style="display: inline-block; width: 23%;">
                     {% for _ in range((restaurant['Price Level'] | round) | int) %} $ {% endfor %}
                 </span>
                 <!-- Display restaurant cuisine -->
-                <span class="restaurant-cuisine" style="display: inline-block; width: 20%; text-align: left;">
+                <span class="restaurant-cuisine" style="display: inline-block; width: 21%; text-align: left;">
                     {{ restaurant['Rating'] }}
                 </span>
                 <button type="button" onclick="event.stopPropagation(); toggleVeto('{{ loop.index0 }}');" class="veto-btn">✗</button>

@@ -11,7 +11,7 @@ def load_data_from_excel(city_name):
         'Lisbon': 'lisbon_restaurants_details.csv',
         'Zurich': 'zurich_restaurants_details.csv'
     }
-    file_path = file_paths.get(city_name, 'Restaurants.csv')  # Default to 'Restaurants.xlsx'
+    file_path = file_paths.get(city_name, 'zurich_restaurants_details.csv')
     return pd.read_csv(file_path)
 
 @app.route('/')
