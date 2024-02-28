@@ -71,16 +71,34 @@
         .back-btn:hover {
             background-color: #0056b3;
         }
+
+        .rating-and-price {
+            display: flex; /* Aligns child elements in a row */
+            align-items: center; /* Centers items vertically */
+            justify-content: center; /* Centers the content horizontally */
+            gap: 10px; /* Adds space between items */
+        }
+
+        .rating-and-price .star {
+            color: #FFD700; /* Gives the star a gold color */
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Great Choice!</h1>
         <div class="detail-item">{{ restaurant['Name'] }}</div>
-        <div class="detail-item">
-            {% for _ in range((restaurant['Price Level'] | round) | int) %} $ {% endfor %}
+        <div class="rating-and-price">
+            <span>{{ restaurant['Rating'] }}</span>
+            <span class="star">★</span>
+            <span>({{ restaurant['User Ratings Total'] }})</span>
+            {% if restaurant['Price Level'] > 0 %} <!-- Check if price level is greater than 0 -->
+                <span>-</span>
+                <span class="price-level">
+                    {% for _ in range((restaurant['Price Level'] | round) | int) %} $ {% endfor %}
+                </span>
+            {% endif %}
         </div>
-        <div class="detail-item">{{ restaurant['Rating'] }}</div>
         <div class="detail-item">
             {% if restaurant.get('Google Maps URL') %}
                 <a href="{{ restaurant.get('Google Maps URL') }}" target="_blank">{{ restaurant['Address'] if restaurant['Address'] != None and restaurant['Address'] != 'nan' else '-' }}</a>
