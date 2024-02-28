@@ -42,7 +42,7 @@
         }
 
         .restaurant-item {
-            position: relative; /* Ensure the position context for the absolute positioning of the button */
+            position: relative;
             border-bottom: 1px solid #eee;
             padding: 10px;
             cursor: pointer;
@@ -89,23 +89,23 @@
         }
 
         .veto-submit-btn {
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            padding: 20px 20px;
-            font-size: 18px;
+            background-color: transparent;
+            color: #FFF;
+            border: 2px solid #FFF;
+            padding: 15px 30px;
+            font-size: 1em;
+            font-weight: 600;
             border-radius: 5px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
-            margin-top: 20px;
-            display: block; /* Center the button */
-            width: 100%%; /* Ensure the button width fits its content */
-            margin-left: auto; /* Align the button to the right */
-            margin-right: auto; /* Align the button to the center */
+            transition: all 0.3s ease;
+            margin: 10px;
+            z-index: 2; /* Ensure buttons are above the floating burger */
         }
 
         .veto-submit-btn:hover {
-            background-color: #0056b3;
+            background-color: #FFF;
+            color: #000;
+            transform: scale(1.05);
         }
 
         .floating-burger {

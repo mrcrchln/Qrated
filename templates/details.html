@@ -53,23 +53,23 @@
         }
 
         .back-btn {
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            font-size: 18px;
+            background-color: transparent;
+            color: #FFF;
+            border: 2px solid #FFF;
+            padding: 15px 30px;
+            font-size: 1em;
+            font-weight: 600;
             border-radius: 5px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
-            margin-top: 20px;
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-            text-decoration: none; /* Ensure button link does not have underline */
+            transition: all 0.3s ease;
+            margin: 10px;
+            text-decoration: none;
         }
 
         .back-btn:hover {
-            background-color: #0056b3;
+            background-color: #FFF;
+            color: #000;
+            transform: scale(1.05);
         }
 
         .rating-and-price {
@@ -82,23 +82,73 @@
         .rating-and-price .star {
             color: #FFD700; /* Gives the star a gold color */
         }
+
+        .hours-container {
+            width: 100%; /* Use the full width of the container */
+            margin-top: 20px; /* Spacing from the details above */
+            max-width: 300px; /* Set a maximum width for the container */
+            margin: 20px auto;
+            padding-bottom: 25px;
+        }
+
+        .hours {
+            display: flex;
+            justify-content: space-between; /* Adjust content distribution */
+            align-items: center; /* Align items vertically */
+            padding: 5px 0; /* Spacing for each row */
+        }
+
+        .day {
+            text-align: left; /* Align the days to the left */
+            width: 40%;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .time {
+            text-align: left;
+            flex-grow: 1; /* Allow the time to grow and fill space */
+        }
+
+        .bold, .hours.bold .day, .hours.bold .time {
+            font-weight: bold;
+        }  
+              
+        .expand-symbol {
+            cursor: pointer;
+            display: inline-block; /* Allows positioning next to the time */
+            transition: transform 0.3s ease; /* Smooth transformation on click */
+        }
+
+        .expand-symbol {
+            cursor: pointer;
+            padding-left: 10px;
+            transition: transform 0.3s ease;
+        }
+        
+        .expand-symbol.active {
+            transform: rotate(180deg);
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Great Choice!</h1>
-        <div class="detail-item">{{ restaurant['Name'] }}</div>
-        <div class="rating-and-price">
-            <span>{{ restaurant['Rating'] }}</span>
-            <span class="star">★</span>
-            <span>({{ restaurant['User Ratings Total'] }})</span>
-            {% if restaurant['Price Level'] > 0 %} <!-- Check if price level is greater than 0 -->
-                <span>-</span>
-                <span class="price-level">
-                    {% for _ in range((restaurant['Price Level'] | round) | int) %} $ {% endfor %}
-                </span>
-            {% endif %}
-        </div>
+        <div class="details">
+            <div class="left-column">
+                <div class="detail-item">{{ restaurant['Name'] }}</div>
+                <div class="rating-and-price">
+                    <span>{{ restaurant['Rating'] }}</span>
+                    <span class="star">★</span>
+                    <span>({{ restaurant['User Ratings Total'] }})</span>
+                    {% if restaurant['Price Level'] > 0 %}
+                        <span>-</span>
+                        <span class="price-level">
+                            {% for _ in range((restaurant['Price Level'] | round) | int) %} $ {% endfor %}
+                        </span>
+                    {% endif %}
+                </div>
         <div class="detail-item">
             {% if restaurant.get('Google Maps URL') %}
                 <a href="{{ restaurant.get('Google Maps URL') }}" target="_blank">{{ restaurant['Address'] if restaurant['Address'] != None and restaurant['Address'] != 'nan' else '-' }}</a>
@@ -112,8 +162,39 @@
             {% else %}
                 -
             {% endif %}
-        </div>        
-        <a href="/" class="back-btn">Choose Again</a>
+        </div>
+        <div class="hours-container">
+            <div class="hours">
+                <div class="day bold">{{ current_day }}:</div>
+                <div class="time bold">{{ restaurant[current_day].replace(', ', ',<br>') | safe }}</div>
+                <div class="expand-symbol" onclick="toggleHours()">⌄</div>
+            </div>
+            <!-- Other days' hours, initially hidden -->
+            <div id="additional-hours" style="display:none;">
+                {% for day in sorted_days %}
+                    {% if day != current_day %}
+                    <div class="hours">
+                        <div class="day">{{ day }}:</div>
+                        <div class="time">{{ restaurant[day].replace(', ', ',<br>') | safe }}</div>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        <a href="/" class="back-btn">Back To Start</a>
     </div>
+    <script>
+        function toggleHours() {
+            var x = document.getElementById("additional-hours");
+            var symbol = document.querySelector(".expand-symbol");
+            if (x.style.display === "none") {
+                x.style.display = "block";
+                symbol.classList.add("active");
+            } else {
+                x.style.display = "none";
+                symbol.classList.remove("active");
+            }
+        }
+        </script>               
 </body>
 </html>
